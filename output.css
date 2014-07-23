@@ -1,0 +1,230 @@
+/* CSS Document */
+
+
+
+body {
+
+	font-size: 12pt;
+
+	font-family: Garamond, AGaramond, Times, Times New Roman, serif; 
+
+	margin-top: .5in;
+
+	margin-bottom: .5in;
+
+	margin-left: 1.25in;
+
+	margin-right: 1.25in;
+
+}
+
+
+
+p {
+
+	margin: 0px;
+
+}
+
+	
+
+img {
+
+	border-style: none;
+
+	border-width: 0px;
+
+}
+
+
+
+caption {
+
+	font-size: 12pt;
+
+	font-weight: bold;
+
+	text-align: left;
+
+}
+
+
+
+tr.vertical th, th {
+
+	font-weight: bold;
+
+	text-align: left;
+
+}
+
+
+
+tr.horizontal th {
+
+	text-align: left;
+
+	// background-color: #eeeeee;
+
+}
+
+	
+
+td, th {
+
+	vertical-align: top;
+
+}
+
+	
+
+a:hover {
+
+	color: #ffffff;
+
+	background-color: #0000ff;
+
+}
+
+
+
+dt {
+
+	font-weight: bold;
+
+	margin-top: 10px;
+
+	margin-left: 10px;
+
+}
+
+
+
+dd {
+
+	margin-left: 20px;
+
+}
+
+
+
+form {
+
+	margin: 0px;
+
+}
+
+
+
+table.menu td {
+
+	white-space: nowrap;
+
+	background-color: #eeeeee;
+
+	padding: 5px;
+
+}
+
+
+
+table.menu td a {
+
+	text-decoration: none;
+
+	background-color: #ddddff;
+
+	color: #000000;
+
+}
+
+
+
+table.menu td a:hover {
+
+	background-color: #0000FF;
+
+	color: #FFFFFF;
+
+}
+
+
+
+table.menu {
+
+	font-size: 8pt;
+
+}
+
+
+
+body.menu {
+
+	margin: 3px;
+
+	padding: 0px;
+
+}
+
+
+
+.stripe {
+
+	// background-color: #eeeeff;
+
+}
+
+
+
+.balance_due, .overpayment, .paid_in_full {
+
+	// background-color: #ffeeee;
+
+	border-top-style: solid;
+
+	border-top-width: 2px;
+
+	border-top-color: #000000;
+
+	font-weight: bold;
+
+}
+
+
+
+.paid_in_full {
+
+	// background-color: #eeffee;
+
+}
+
+
+
+h1 {
+
+	font-family: OffensiveBold; 
+
+	margin-top: 0px; }
+
+	
+
+h3 {
+
+	margin: 0px;
+
+}
+
+
+
+frame {
+
+	border-style: solid;
+
+	border-color: #dddddd;
+
+	border-width: 0px 1px 0px 0px;
+
+}
+
+
+

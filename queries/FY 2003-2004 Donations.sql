@@ -1,0 +1,1 @@
+SELECT c.primary_name, c.first_name, f.fund, d. * FROM donations AS dJOIN donation_associations AS da ON da.donation_id = d.donation_idJOIN contacts AS c ON c.contact_id = da.contact_idJOIN funds AS f ON f.fund_id = d.fund_idWHERE d.date >=  '2003-10-1'GROUP  BY d.donation_idORDER  BY f.fund ASC , c.primary_name ASC , c.first_name ASC;
