@@ -30,12 +30,12 @@ $file = $list[$cow];
 <h1>Gulch DB</h1>
 <h3>Cottonwood Gulch Foundation</h3>
 		<table><tr class="stripe"><th>Help</th><td>For assistance with this database, please contact Seth Battis (<a href="mailto:&quot;Seth%20Battis&quot; &lt;seth@cottonwoodgulch.org&gt;">seth@cottonwoodgulch.org</a>)</td></tr>
-		<tr><th>Generic Mailing List</th><td><form action ="scripts/mailing_list.php"><input type="submit" value="Export CSV"></form><br>Generic mailing list sorted in country and then zip code order, with contacts grouped by address. This excludes the recurring business contacts group of individuals, all business contacts, deceased contacts and school group participants.</tr>
+		<tr><th>Generic Mailing List</th><td><form action ="scripts/mailing_list.php"><input type="submit" value="Export CSV"></form><br>Generic mailing list sorted in country and then zip code order, with contacts grouped by address. This excludes the recurring business contacts group of individuals, all business contacts, deceased contacts and school group participants.<p>UPDATED 5/10/2012: Now honors mailing preference option per contact.</p></tr>
 		<tr class="stripe"><th rowspan="2">Tuition Reports</th><td><form method="get" action="scripts/tuition_report.php">Monthly <select name="month">
 		<?php
 		$now = getdate();
-		$year = $now[year];
-		$month = $now[mon];
+		$year = $now["year"];
+		$month = $now["mon"];
 
 		for ($y = $year; $y >= 2003; $y--)
 		{

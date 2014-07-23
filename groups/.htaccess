@@ -1,4 +1,4 @@
-AuthUserFile /Users/seth/Sites/sandbox/gulch-data/.htpasswd
+AuthUserFile /nfs/users/trek/.htpasswd
 AuthGroupFile /dev/null
 AuthName Cottonwood_Gulch_Remote
 AuthType Basic

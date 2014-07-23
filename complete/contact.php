@@ -172,7 +172,26 @@ do {
 		<th><?php echo $row_contact_type['gender_caption']; ?></th>
 		<td><input type="radio" name="gender" value="Male"<?php if ($exist) { if ($row_contact['gender'] == 'Male') echo ' checked'; } ?>>Male <input type="radio" name="gender" value="Female" <?php if ($exist) { if ($row_contact['gender'] == 'Female') echo ' checked'; } ?>>Female</td>
 	</tr>
-<?php } if ($row_contact_type["show_deceased"]) { ?>
+<?php } ?>
+	<tr>
+		<th scope="row">Mailing Preference</th>
+		<td><select name="mailing_preference">
+			<?php
+				$mpQuery = "select * from mailing_preferences order by rank asc";
+				$mpResult = mysql_query($mpQuery);
+				while($mpRow=mysql_fetch_assoc($mpResult))
+				{
+					echo "<option value=\"{$mpRow["mailing_preference_id"]}\"";
+					if ($row_contact["mailing_preference"] == $mpRow["mailing_preference_id"])
+					{
+						echo " selected";
+					}
+					echo ">{$mpRow["mailing_preference"]}</option>";
+				}
+			?>
+		</select></td>
+	</tr>
+<?php if ($row_contact_type["show_deceased"]) { ?>
     <tr>
       <th scope="row"><?php echo $row_contact_type['deceased_caption']; ?></th>
       <td><input name="deceased" type="radio"<?php if ($exist) { if ($row_contact['deceased'] == 1) echo ' checked'; } ?> value="1">Yes <input type="radio" name="deceased" value="0" <?php if ($exist) { if ($row_contact['deceased'] == 0) echo ' checked'; } ?>>No</td>

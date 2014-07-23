@@ -64,7 +64,7 @@ $totalRows_phone_types = mysql_num_rows($phone_types);
 <table class="menu">
   <tr>
 <?php if ($totalRows_phones > 0) do { ?>
-    <td><a href="phones.php?cid=<?php echo $cid; ?>&pid=<?php echo $row_phones['phone_id']; ?>&rec=view" title="<?php echo ($row_phones['formatted'] ? $row_phones['number'] : Phone($row_phones['number'])); ?>"><?php echo $row_phones["phone_type"]; ?></a></td>
+    <td><a href="phones.php?cid=<?php echo $cid; ?>&pid=<?php echo $row_phones['phone_id']; ?>&rec=view" title="<?php echo ($row_phones['formatted'] ? $row_phones['number'] : dbPhone($row_phones['number'])); ?>"><?php echo $row_phones["phone_type"]; ?></a></td>
 <?php } while ($row_phones = mysql_fetch_assoc($phones)); ?>
 	<td><a href="phones.php?cid=<?php echo $cid; ?>&rec=create">New Phone Number</a></td>
   </tr>
@@ -119,7 +119,7 @@ else echo $_GET['cid']; ?>"> <?php } ?>
   </tr>
   <tr>
     <th scope="row">number</th>
-    <td><input name="number" type="text" value="<?php if ($exist) echo ($row_phone['formatted'] ? $row_phone['number'] : Phone($row_phone['number'])); ?>" /></td>
+    <td><input name="number" type="text" value="<?php if ($exist) echo ($row_phone['formatted'] ? $row_phone['number'] : dbPhone($row_phone['number'])); ?>" /></td>
   </tr>
   <tr>
     <th scope="row">formatted</th>
