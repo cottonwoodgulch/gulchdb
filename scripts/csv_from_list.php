@@ -115,7 +115,7 @@ while (list ($key, $value) = each ($_POST))
 				if (mysql_num_rows ($result))
 				{
 					$email = mysql_fetch_assoc ($result);
-					csv (Name ($value, "%n %L <{$email["email"]}>"));
+					csv ($email["email"]);
 				}
 				else
 				{
