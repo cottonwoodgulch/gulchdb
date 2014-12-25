@@ -1,5 +1,7 @@
 <?php
 	require_once('../library.inc.php');
+	
+	$rbac->enforce('view_payment', $_SESSION['user']);
 
 	$exist = RecordUpdate ('payments.php', 'payments', 'payment_id', 'pid');
 

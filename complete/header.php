@@ -46,7 +46,13 @@
 			<a href="payments.php?cid=<?php echo $cid; ?>">Payments</a>
 		</td>
 		<td>
+			<a href="database_roles.php?cid=<?php echo $cid; ?>">Database Roles</a>
+		</td>
+		<td>
 			<a href="notes.php?cid=<?php echo $cid; ?>">Notes</a>
+		</td>
+		<td>
+			<a target="_top" href="../login.php">Log Out</a>
 		</td>
 		<td width="100%" align="right">Complete</td>
 	</tr>

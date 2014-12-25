@@ -1,6 +1,8 @@
 <?php
 
 	require_once('../library.inc.php');
+	
+	$rbac->enforce('view_phone', $_SESSION['user']);
 
 	$exist = RecordUpdate ('phones.php','phones', 'phone_id', 'pid', 'phone_associations', array('number' => array ('function' => 'StripPhone')));
 

@@ -1,3 +1,7 @@
+# Composer - http://getcomposer.org #
+#####################################
+vendor
+
 # OS generated files #
 ######################
 .DS_Store

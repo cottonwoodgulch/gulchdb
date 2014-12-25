@@ -5,9 +5,9 @@
 # http://www.sequelpro.com/
 # http://code.google.com/p/sequel-pro/
 #
-# Host: trek.sqldb.swcp.com (MySQL 5.5.40-MariaDB-log)
+# Host: localhost (MySQL 5.5.38)
 # Database: trek
-# Generation Time: 2014-12-17 16:23:59 +0000
+# Generation Time: 2014-12-25 06:44:06 +0000
 # ************************************************************
 
 
@@ -133,6 +133,8 @@ CREATE TABLE `contacts` (
   `gender` enum('Male','Female') DEFAULT NULL,
   `deceased` tinyint(4) NOT NULL DEFAULT '0',
   `mailing_preference` int(11) NOT NULL DEFAULT '1',
+  `username` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
   `modified` datetime DEFAULT NULL,
   PRIMARY KEY (`contact_id`),
   KEY `contact_type_id` (`contact_type_id`),
@@ -443,6 +445,64 @@ CREATE TABLE `phones` (
   KEY `phone_type_id` (`phone_type_id`),
   KEY `owner_id` (`owner_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+
+
+
+# Dump of table phprbac_permissions
+# ------------------------------------------------------------
+
+CREATE TABLE `phprbac_permissions` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Lft` int(11) NOT NULL,
+  `Rght` int(11) NOT NULL,
+  `Title` char(64) COLLATE utf8_bin NOT NULL,
+  `Description` text COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `Title` (`Title`),
+  KEY `Lft` (`Lft`),
+  KEY `Rght` (`Rght`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+
+# Dump of table phprbac_rolepermissions
+# ------------------------------------------------------------
+
+CREATE TABLE `phprbac_rolepermissions` (
+  `RoleID` int(11) NOT NULL,
+  `PermissionID` int(11) NOT NULL,
+  `AssignmentDate` int(11) NOT NULL,
+  PRIMARY KEY (`RoleID`,`PermissionID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+
+# Dump of table phprbac_roles
+# ------------------------------------------------------------
+
+CREATE TABLE `phprbac_roles` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `Lft` int(11) NOT NULL,
+  `Rght` int(11) NOT NULL,
+  `Title` varchar(128) COLLATE utf8_bin NOT NULL,
+  `Description` text COLLATE utf8_bin NOT NULL,
+  PRIMARY KEY (`ID`),
+  KEY `Title` (`Title`),
+  KEY `Lft` (`Lft`),
+  KEY `Rght` (`Rght`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
+
+
+
+# Dump of table phprbac_userroles
+# ------------------------------------------------------------
+
+CREATE TABLE `phprbac_userroles` (
+  `UserID` int(11) NOT NULL,
+  `RoleID` int(11) NOT NULL,
+  `AssignmentDate` int(11) NOT NULL,
+  PRIMARY KEY (`UserID`,`RoleID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_bin;
 
 
 

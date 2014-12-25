@@ -1,5 +1,8 @@
 <?php
 require_once('../library.inc.php');
+
+$rbac->enforce('view_url', $_SESSION['user']);
+
 $exist = RecordUpdate ('urls.php', 'urls', 'url_id', 'uid', 'url_associations', array ('url' => array ('function' => 'StripURL')));
 
 $cid = (isset ($_GET['cid']) ? $_GET['cid'] : exit ("<strong>Unspecified Contact:</strong> A contact must be specified to load this form."));

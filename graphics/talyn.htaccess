@@ -1,6 +1,0 @@
-AuthUserFile /Users/seth/Sites/sandbox/gulch-data/.htpasswd
-AuthGroupFile /dev/null
-AuthName Cottonwood_Gulch_Remote
-AuthType Basic
-
-require valid-user

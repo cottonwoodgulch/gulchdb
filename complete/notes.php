@@ -1,6 +1,8 @@
 <?php
 
 	require_once ('../library.inc.php');
+	
+	$rbac->enforce('view_note', $_SESSION['user']);
 
 	$exist = RecordUpdate ('notes.php', 'notes', 'note_id', 'nid');
 	

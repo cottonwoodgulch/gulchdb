@@ -2,7 +2,9 @@
 
 require_once('../library.inc.php');
 
-$exist = RecordUpdate ('contact.php', 'contacts', 'contact_id', 'cid');
+$rbac->enforce('view_contact', $_SESSION['user']);
+
+$exist = RecordUpdate ('contact.php', 'contacts', 'contact_id', 'cid', NULL, array('password' => array('function' => 'HashPassword')));
 
 $cid = (isset ($_GET['cid']) ? $_GET['cid'] : NULL);
 
@@ -173,6 +175,12 @@ do {
 		<td><input type="radio" name="gender" value="Male"<?php if ($exist) { if ($row_contact['gender'] == 'Male') echo ' checked'; } ?>>Male <input type="radio" name="gender" value="Female" <?php if ($exist) { if ($row_contact['gender'] == 'Female') echo ' checked'; } ?>>Female</td>
 	</tr>
 <?php } ?>
+	<tr>
+		<th scope="row">Database User</th>
+		<td><input type="text" name="username" value="<?php if ($exist) echo $row_contact['username']; ?>" /><br />
+			<input type="password" name="password" placeholder="<?php if ($exist && strlen($row_contact['password'])) echo '&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;'; ?>"/>
+		</td>
+	</tr>
 	<tr>
 		<th scope="row">Mailing Preference</th>
 		<td><select name="mailing_preference">

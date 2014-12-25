@@ -1,5 +1,7 @@
 <?php
 	require_once('../library.inc.php');
+	
+	$rbac->enforce('view_donation', $_SESSION['user']);
 
 	$exist = RecordUpdate ('donations.php', 'donations', 'donation_id', 'did', 'donation_associations');
 

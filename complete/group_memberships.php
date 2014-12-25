@@ -1,5 +1,7 @@
 <?php
 	require_once('../library.inc.php');
+	
+	$rbac->enforce('view_roster', $_SESSION['user']);
 
 	$exist = RecordUpdate ('group_memberships.php', 'roster_memberships', 'roster_membership_id', 'gid');
 

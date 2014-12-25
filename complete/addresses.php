@@ -1,4 +1,10 @@
-<?php require_once('../library.inc.php'); ?>
+<?php
+	
+require_once('../library.inc.php');
+
+$rbac->enforce('view_address', $_SESSION['user']);	
+	
+?>
 <?php
 $exist = RecordUpdate ('addresses.php', 'addresses', 'address_id', 'aid', 'address_associations');
 
