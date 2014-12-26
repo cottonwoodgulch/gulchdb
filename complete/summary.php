@@ -10,64 +10,78 @@
 	$contact_result = mysql_query ($contact_query) or exit (mysql_error());
 	$contact = mysql_fetch_assoc ($contact_result);
 
-	$phones_query = "SELECT p.*, pt.*, c.*
-					 FROM phones AS p
-					 JOIN phone_associations AS pa ON pa.phone_id = p.phone_id
-					 JOIN contacts AS c ON c.contact_id = pa.contact_id
-					 JOIN phone_types AS pt ON pt.phone_type_id = p.phone_type_id
-					 WHERE c.contact_id = $cid
-					 ORDER BY pt.rank ASC";
-	$phones = mysql_query ($phones_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	if ($rbac->check('view_phone', $_SESSION['user']) || $rbac->check('view_contact_information', $_SESSION['user'])) {
+		$phones_query = "SELECT p.*, pt.*, c.*
+						 FROM phones AS p
+						 JOIN phone_associations AS pa ON pa.phone_id = p.phone_id
+						 JOIN contacts AS c ON c.contact_id = pa.contact_id
+						 JOIN phone_types AS pt ON pt.phone_type_id = p.phone_type_id
+						 WHERE c.contact_id = $cid
+						 ORDER BY pt.rank ASC";
+		$phones = mysql_query ($phones_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	}
 
-	$emails_query = "SELECT e.*, et.*, c.*
-					 FROM emails AS e
-					 JOIN email_associations AS ea ON ea.email_id = e.email_id
-					 JOIN contacts AS c ON c.contact_id = ea.contact_id
-					 JOIN email_types AS et ON et.email_type_id = e.email_type_id
-					 WHERE c.contact_id = $cid
-					 ORDER BY et.rank ASC";
-	$emails = mysql_query ($emails_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	if ($rbac->check('view_email', $_SESSION['user']) || $rbac->check('view_contact_information', $_SESSION['user'])) {
+		$emails_query = "SELECT e.*, et.*, c.*
+						 FROM emails AS e
+						 JOIN email_associations AS ea ON ea.email_id = e.email_id
+						 JOIN contacts AS c ON c.contact_id = ea.contact_id
+						 JOIN email_types AS et ON et.email_type_id = e.email_type_id
+						 WHERE c.contact_id = $cid
+						 ORDER BY et.rank ASC";
+		$emails = mysql_query ($emails_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	}
 
-	$urls_query = "SELECT u.*, ut.*, c.*
-				   FROM urls AS u
-				   JOIN url_associations AS ua ON ua.url_id = u.url_id
-				   JOIN contacts AS c ON c.contact_id = ua.contact_id
-				   JOIN url_types AS ut ON ut.url_type_id = u.url_type_id
-				   WHERE c.contact_id = $cid
-				   ORDER BY ut.rank ASC";
-	$urls = mysql_query ($urls_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	if ($rbac->check('view_url', $_SESSION['user']) || $rbac->check('view_contact_information', $_SESSION['user'])) {
+		$urls_query = "SELECT u.*, ut.*, c.*
+					   FROM urls AS u
+					   JOIN url_associations AS ua ON ua.url_id = u.url_id
+					   JOIN contacts AS c ON c.contact_id = ua.contact_id
+					   JOIN url_types AS ut ON ut.url_type_id = u.url_type_id
+					   WHERE c.contact_id = $cid
+					   ORDER BY ut.rank ASC";
+		$urls = mysql_query ($urls_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	}
 
-	$addresses_query = "SELECT a.*, at.*, c.*
-						FROM addresses AS a
-						JOIN address_associations AS aa ON a.address_id = aa.address_id
-						JOIN contacts AS c ON c.contact_id = aa.contact_id
-						JOIN address_types AS at ON at.address_type_id = a.address_type_id
-						WHERE c.contact_id = $cid
-						ORDER BY at.rank ASC";
-	$addresses = mysql_query ($addresses_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	if ($rbac->check('view_address', $_SESSION['user']) || $rbac->check('view_contact_information', $_SESSION['user'])) {
+		$addresses_query = "SELECT a.*, at.*, c.*
+							FROM addresses AS a
+							JOIN address_associations AS aa ON a.address_id = aa.address_id
+							JOIN contacts AS c ON c.contact_id = aa.contact_id
+							JOIN address_types AS at ON at.address_type_id = a.address_type_id
+							WHERE c.contact_id = $cid
+							ORDER BY at.rank ASC";
+		$addresses = mysql_query ($addresses_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	}
 
-	$relationships_query = "SELECT *
-							FROM relationships AS r
-							JOIN contacts AS c ON c.contact_id = r.contact_id
-							LEFT JOIN titles AS t ON t.title_id = c.title_id
-							LEFT JOIN degrees AS d ON d.degree_id = c.degree_id
-							JOIN relationship_types AS rt ON rt.relationship_type_id = r.relationship_type_id
-							WHERE r.relative_id = $cid
-							ORDER BY rt.rank ASC, c.primary_name ASC, c.first_name ASC";
-	$relationships = mysql_query ($relationships_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	if ($rbac->check('view_relationship', $_SESSION['user']) || $rbac->check('view_contact_information', $_SESSION['user'])) {
+		$relationships_query = "SELECT *
+								FROM relationships AS r
+								JOIN contacts AS c ON c.contact_id = r.contact_id
+								LEFT JOIN titles AS t ON t.title_id = c.title_id
+								LEFT JOIN degrees AS d ON d.degree_id = c.degree_id
+								JOIN relationship_types AS rt ON rt.relationship_type_id = r.relationship_type_id
+								WHERE r.relative_id = $cid
+								ORDER BY rt.rank ASC, c.primary_name ASC, c.first_name ASC";
+		$relationships = mysql_query ($relationships_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	}
 
-	$groups_query = "SELECT r.*, g.*, l.*, c.*
-					 FROM rosters AS r
-					 JOIN roster_memberships AS m ON r.roster_id = m.roster_id
-					 JOIN contacts AS c ON c.contact_id = m.contact_id
-					 JOIN groups AS g ON g.group_id = r.group_id
-					 LEFT JOIN roles AS l ON l.role_id = m.role_id
-					 WHERE m.contact_id = $cid
-					 ORDER BY r.year DESC";
-	$groups = mysql_query ($groups_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	if ($rbac->check('view_roster', $_SESSION['user']) || $rbac->check('view_contact_information', $_SESSION['user'])) {
+		$groups_query = "SELECT r.*, g.*, l.*, c.*
+						 FROM rosters AS r
+						 JOIN roster_memberships AS m ON r.roster_id = m.roster_id
+						 JOIN contacts AS c ON c.contact_id = m.contact_id
+						 JOIN groups AS g ON g.group_id = r.group_id
+						 LEFT JOIN roles AS l ON l.role_id = m.role_id
+						 WHERE m.contact_id = $cid
+						 ORDER BY r.year DESC";
+		$groups = mysql_query ($groups_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	}
 
-	$notes_query = "SELECT * FROM notes WHERE contact_id = $cid ORDER BY modified ASC";
-	$notes = mysql_query ($notes_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	if ($rbac->check('view_note', $_SESSION['user'])) {
+		$notes_query = "SELECT * FROM notes WHERE contact_id = $cid ORDER BY modified ASC";
+		$notes = mysql_query ($notes_query, $GLOBALS['db']['link']) or exit (mysql_error());
+	}
 ?>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

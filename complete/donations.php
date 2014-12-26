@@ -1,9 +1,14 @@
 <?php
 	require_once('../library.inc.php');
 	
+if (!$rbac->check('view_donation', $_SESSION['user']) && !$rbac->check('view_financial_information', $_SESSION['user'])) {
 	$rbac->enforce('view_donation', $_SESSION['user']);
+}
 
-	$exist = RecordUpdate ('donations.php', 'donations', 'donation_id', 'did', 'donation_associations');
+	$exist = true;
+	if ($rbac->check('edit_donation', $_SESSION['user'])) {
+		$exist = RecordUpdate ('donations.php', 'donations', 'donation_id', 'did', 'donation_associations');
+	}
 
 	$cid = (isset ($_GET['cid']) ?
 		$_GET['cid'] :
@@ -120,7 +125,7 @@ else
 						else echo 'n/a';
 						mysql_free_result ($shared);
 					?></td>
-					<td><input type="submit" name="button" value="Edit"></td>
+					<?php if ($rbac->check('edit_donation', $_SESSION['user'])): ?><td><input type="submit" name="button" value="Edit"></td><?php endif; ?>
 				</form>
 			</tr>
 <?php
@@ -131,6 +136,8 @@ else
 <?php
 	}
 ?>
+	<?php if ($rbac->check('edit_donation', $_SESSION['user'])): ?>
+
 <form name="donation-update" method="post" action="donations.php?cid=<?php echo $cid . ($did ? "&did=$did" : ''); ?>&rec=&rec=<?php echo ($exist ? 'update' : 'insert'); ?>">
 	<input type="hidden" name="donor_id" value="<?php echo ($exist ? $row_donation['contact_id'] : $cid); ?>">
 	<table>
@@ -231,6 +238,7 @@ if($rows > 0)
 <input type="submit" name="button" value="<?php echo ($exist ? 'Revert' : 'Cancel'); ?>"></form></td>
 </tr>
 </table>
+<?php endif; ?>
 	</body>
 </html>
 <?php

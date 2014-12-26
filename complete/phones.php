@@ -2,9 +2,14 @@
 
 	require_once('../library.inc.php');
 	
-	$rbac->enforce('view_phone', $_SESSION['user']);
+	if (!$rbac->check('view_phone', $_SESSION['user']) && !$rbac->check('view_contact_information', $_SESSION['user'])) {
+		$rbac->enforce('view_phone', $_SESSION['user']);
+	}
 
-	$exist = RecordUpdate ('phones.php','phones', 'phone_id', 'pid', 'phone_associations', array('number' => array ('function' => 'StripPhone')));
+	$exist = true;
+	if ($rbac->check('edit_phone', $_SESSION['user'])) {
+		$exist = RecordUpdate ('phones.php','phones', 'phone_id', 'pid', 'phone_associations', array('number' => array ('function' => 'StripPhone')));
+	}
 
 $cid = (isset ($_GET['cid']) ? $_GET['cid'] : exit ("<strong>Unspecified Contact:</strong> A contact must be specified to load this form."));
 $pid = (isset ($_GET['pid']) ? $_GET['pid'] : NULL);
@@ -68,7 +73,7 @@ $totalRows_phone_types = mysql_num_rows($phone_types);
 <?php if ($totalRows_phones > 0) do { ?>
     <td><a href="phones.php?cid=<?php echo $cid; ?>&pid=<?php echo $row_phones['phone_id']; ?>&rec=view" title="<?php echo ($row_phones['formatted'] ? $row_phones['number'] : dbPhone($row_phones['number'])); ?>"><?php echo $row_phones["phone_type"]; ?></a></td>
 <?php } while ($row_phones = mysql_fetch_assoc($phones)); ?>
-	<td><a href="phones.php?cid=<?php echo $cid; ?>&rec=create">New Phone Number</a></td>
+	<?php if ($rbac->check('edit_phone', $_SESSION['user'])): ?><td><a href="phones.php?cid=<?php echo $cid; ?>&rec=create">New Phone Number</a></td><?php endif; ?>
   </tr>
 </table>
 
@@ -134,6 +139,7 @@ else echo $_GET['cid']; ?>"> <?php } ?>
   </tr>
 <?php } ?>
 </table>
+<?php if ($rbac->check('edit_phone', $_SESSION['user'])): ?>
 <table>
 <tr>
 <td>
@@ -152,6 +158,7 @@ else echo $_GET['cid']; ?>"> <?php } ?>
 <input type="submit" name="button" value="<?php echo ($exist ? 'Revert' : 'Cancel'); ?>"></form></td>
 </tr>
 </table>
+<?php endif; ?>
 </body>
 </html>
 <?php

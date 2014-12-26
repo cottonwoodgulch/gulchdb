@@ -2,6 +2,9 @@
 
 	require_once('../library.inc.php');
 
+	if (!$rbac->check('edit_contact_information', $_SESSION['user']) && !$rbac->check('edit_financial_information', $_SESSION['user'])) {
+		$rbac->enforce('edit_contact_information', $_SESSION['user']);
+	}
 
 	$rec = array ('a' => array ('page' => 'addresses.php',
 								'title' => 'Address',

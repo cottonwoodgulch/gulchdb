@@ -1,9 +1,14 @@
 <?php
 	require_once('../library.inc.php');
 	
-	$rbac->enforce('view_roster', $_SESSION['user']);
+	if (!$rbac->check('view_roster', $_SESSION['user']) && !$rbac->check('view_contact_information', $_SESSION['user'])) {
+		$rbac->enforce('view_roster', $_SESSION['user']);
+	}
 
-	$exist = RecordUpdate ('group_memberships.php', 'roster_memberships', 'roster_membership_id', 'gid');
+	$exist = true;
+	if ($rbac->check('edit_roster', $_SESSION['user'])) {
+		$exist = RecordUpdate ('group_memberships.php', 'roster_memberships', 'roster_membership_id', 'gid');
+	}
 
 	$cid = (isset ($_GET['cid']) ?
 		$_GET['cid'] :
@@ -90,10 +95,11 @@ do {
 				if ($row_role) echo $row_role['role'];
 				mysql_free_result ($role);
 			}?></td>
-		<td><form name="roster-edit" method="post" action="group_memberships.php?cid=<?php echo $cid; ?>&gid=<?php echo $row_roster_memberships['roster_membership_id']; ?>"><input type="submit" name="button" value="Edit"></form></td>
+		<?php if ($rbac->check('edit_roster', $_SESSION['user'])): ?><td><form name="roster-edit" method="post" action="group_memberships.php?cid=<?php echo $cid; ?>&gid=<?php echo $row_roster_memberships['roster_membership_id']; ?>"><input type="submit" name="button" value="Edit"></form></td><?php endif; ?>
 	</tr>
 <?php }} while ($row_roster_memberships = mysql_fetch_assoc($roster_memberships)); }?>
 </table>
+	<?php if ($rbac->check('edit_roster', $_SESSION['user'])): ?>
 <form name="roster-edit" method="post" action="group_memberships.php?cid=<?php echo $cid . ($exist ? "&gid=$gid" : '') . '&rec=' . ($exist ? 'update' : 'insert'); ?>">
 <input type="hidden" name="contact_id" value="<?php echo ($exist ? $row_roster_membership['contact_id'] : $cid); ?>">
 <table>
@@ -169,6 +175,7 @@ do {
 </table>
 		</tr>
 	</table>
+	<?php endif; ?>
 </body>
 </html>
 <?php

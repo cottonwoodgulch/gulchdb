@@ -2,11 +2,17 @@
 	
 require_once('../library.inc.php');
 
-$rbac->enforce('view_address', $_SESSION['user']);	
+if (!$rbac->check('view_address', $_SESSION['user']) && !$rbac->check('view_contact_information', $_SESSION['user'])) {
+	$rbac->enforce('view_address', $_SESSION['user']);
+}
 	
 ?>
 <?php
-$exist = RecordUpdate ('addresses.php', 'addresses', 'address_id', 'aid', 'address_associations');
+
+$exist = true;
+if ($rbac->check('edit_address', $_SESSION['user'])) {
+	$exist = RecordUpdate ('addresses.php', 'addresses', 'address_id', 'aid', 'address_associations');
+}
 
 $cid = (isset($_GET['cid']) ? $_GET['cid'] : exit ("<strong>Unspecified Contact:</strong> A contact must be specified to load this form."));
 $aid = (isset($_GET['aid']) ? $_GET['aid'] : NULL);
@@ -81,7 +87,9 @@ $totalRows_address_types = mysql_num_rows($address_types);
 <?php do { ?>
     <td><a href="addresses.php?cid=<?php echo $cid; ?>&aid=<?php echo $row_addresses['address_id']; ?>&rec=view" title="<?php echo $row_addresses['street_address_1']; ?>"><?php echo $row_addresses["address_type"]; ?></a><!--&nbsp;<a href="letter.php?cid=<?php echo $cid; ?>&aid=<?php echo $row_addresses['address_id']; ?>"><img src="../graphics/letter.gif" alt="Write"></a>--></td>
 <?php } while ($row_addresses = mysql_fetch_assoc($addresses)); ?>
+<?php if ($rbac->check('edit_contact', $_SESSION['user'])): ?>
 	<td><a href="addresses.php?cid=<?php echo $cid; ?>&rec=create">New Address</a></td>
+<?php endif; ?>
   </tr>
 </table>
 
@@ -166,6 +174,7 @@ else echo $_GET['cid']; ?>"> <?php } ?>
   </tr>
 <?php } ?>
 </table>
+<?php if ($rbac->check('edit_address', $_SESSION['user'])): ?>
 <table>
 <tr>
 <td>
@@ -184,6 +193,7 @@ else echo $_GET['cid']; ?>"> <?php } ?>
 <input type="submit" name="button" value="<?php echo ($exist ? 'Revert' : 'Cancel'); ?>"></form></td>
 </tr>
 </table>
+<?php endif; ?>
 </body>
 </html>
 <?php

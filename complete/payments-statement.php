@@ -1,7 +1,14 @@
 <?php
 	require_once('../library.inc.php');
 
-	$exist = RecordUpdate ('payments.php', 'payments', 'payment_id', 'pid');
+	if (!$rbac->check('view_payment', $_SESSION['user']) && !$rbac->check('view_financial_information', $_SESSION['user'])) {
+		$rbac->enforce('view_payment', $_SESSION['user']);
+	}
+	
+	$exist = true;
+	if ($rbac->check('edit_payment', $_SESSION['user'])) {
+		$exist = RecordUpdate ('payments.php', 'payments', 'payment_id', 'pid');
+	}
 
 	$cid = (isset ($_GET['cid']) ?
 		$_GET['cid'] :

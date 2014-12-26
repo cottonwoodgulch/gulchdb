@@ -1,7 +1,7 @@
 <?php
 	require_once('../library.inc.php');
 	
-	$rbac->enforce('assign_role', $_SESSION['user']);
+	$rbac->enforce('view_role', $_SESSION['user']);
 	
 	$cid = (isset ($_GET['cid']) ?
 		$_GET['cid'] :
@@ -10,11 +10,14 @@
 	use PhpRbac\Rbac;
 	$rbac = new Rbac();
 		
-	if (isset($_REQUEST['RoleID']) && isset($_REQUEST['toggle'])) {
-		if ($_REQUEST['toggle'] == 'Add') {
-			$rbac->Users->assign($_POST['RoleID'], $cid);
-		} else if ($_REQUEST['toggle'] == 'Remove') {
-			$rbac->Users->unassign($_POST['RoleID'], $cid);
+	if ($rbac->check('assign_role', $_SESSION['user']) && isset($_REQUEST['RoleID']) && isset($_REQUEST['toggle'])) {
+		if ($rbac->Permissions->getTitle($_REQUEST['RoleID']) != 'Admin' || $rbac->check('promote_admin', $_SESSION['user']))
+		{
+			if ($_REQUEST['toggle'] == 'Add') {
+				$rbac->Users->assign($_POST['RoleID'], $cid);
+			} else if ($_REQUEST['toggle'] == 'Remove') {
+				$rbac->Users->unassign($_POST['RoleID'], $cid);
+			}
 		}
 	}
 	
@@ -50,7 +53,7 @@
 	</tr>
 
 <?php
-foreach ($roles as $role) {
+foreach ($roles as $role):
 	$buttonName = 'Add';
 	if (in_array($role['ID'], $user_roles)) {
 		$buttonName = 'Remove';
@@ -59,9 +62,19 @@ foreach ($roles as $role) {
 	<tr<?php Stripe($rc); ?>>
 		<td><?php echo $role['Title']; ?></td>
 		<td><?php echo $role['Description']; ?></td>
-		<td><form name="role-edit" method="post" action="database_roles.php?cid=<?php echo $cid; ?>"><input type="hidden" name="RoleID" value="<?php echo $role['ID']; ?>"/><input type="submit" name="toggle" value="<?php echo $buttonName; ?>"></form></td>
+		<td>
+			<?php if ($role['Title'] != 'Admin' || $rbac->check('promote_admin', $_SESSION['user'])): ?>
+			<form name="role-edit" method="post" action="database_roles.php?cid=<?php echo $cid; ?>">
+				<input type="hidden" name="RoleID" value="<?php echo $role['ID']; ?>"/>
+				<input type="submit" name="toggle" value="<?php echo $buttonName; ?>">
+			</form>
+			<?php else:
+				echo $buttonName;
+			endif;
+			?>
+		</td>
 	</tr>
-<?php }?>
+<?php endforeach; ?>
 </table>
 </body>
 </html>

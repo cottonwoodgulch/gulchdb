@@ -1,9 +1,14 @@
 <?php
 require_once('../library.inc.php');
 
-$rbac->enforce('view_url', $_SESSION['user']);
+if (!$rbac->check('view_url', $_SESSION['user']) && !$rbac->check('view_contact_information', $_SESSION['user'])) {
+	$rbac->enforce('view_url', $_SESSION['user']);
+}
 
-$exist = RecordUpdate ('urls.php', 'urls', 'url_id', 'uid', 'url_associations', array ('url' => array ('function' => 'StripURL')));
+$exist = true;
+if ($rbac->check('edit_url', $_SESSION['user'])) {
+	$exist = RecordUpdate ('urls.php', 'urls', 'url_id', 'uid', 'url_associations', array ('url' => array ('function' => 'StripURL')));
+}
 
 $cid = (isset ($_GET['cid']) ? $_GET['cid'] : exit ("<strong>Unspecified Contact:</strong> A contact must be specified to load this form."));
 $uid = (isset ($_GET['uid']) ? $_GET['uid'] : NULL);
@@ -68,11 +73,11 @@ $totalRows_url_types = mysql_num_rows($url_types);
 <?php if ($totalRows_urls > 0) do { ?>
     <td><a href="urls.php?cid=<?php echo $cid; ?>&uid=<?php echo $row_urls['url_id']; ?>&rec=view"><?php echo $row_urls['url_type']; ?></a>&nbsp;<a href="<?php echo URL($row_urls['url']); ?>" target="<?php echo $row_contacts['primary_name']; ?>"><img src="../graphics/url.gif" alt="Open"></a></td>
 <?php } while ($row_urls = mysql_fetch_assoc($urls)); ?>
-	<td><a href="urls.php?cid=<?php echo $cid; ?>&rec=create">New URL</a></td>
+	<?php if ($rbac->check('edit_url', $_SESSION['user'])): ?><td><a href="urls.php?cid=<?php echo $cid; ?>&rec=create">New URL</a></td><?php endif; ?>
   </tr>
 </table>
 
-<form action="urls.php?cid=<?php echo $cid; ?><?php if ($exist) echo '&uid=' . $uid; ?>&rec=<?php echo ($exist ? 'update' : 'insert'); ?>" method="post" name="phone">
+<form action="urls.php?cid=<?php echo $cid; ?><?php if ($exist) echo '&uid=' . $uid; ?>&rec=<?php echo ($exist ? 'update' : 'insert'); ?>" method="post" name="url">
 <table width="100%" >
 <?php if ($exist) { ?>
   <tr>
@@ -131,6 +136,7 @@ else echo $_GET['cid']; ?>"> <?php } ?>
   </tr>
 <?php } ?>
 </table>
+<?php if ($rbac->check('edit_url', $_SESSION['user'])): ?>
 <table>
 <tr>
 <td>
@@ -149,6 +155,7 @@ else echo $_GET['cid']; ?>"> <?php } ?>
 <input type="submit" name="button" value="<?php echo ($exist ? 'Revert' : 'Cancel'); ?>"></form></td>
 </tr>
 </table>
+<?php endif; ?>
 </body>
 </html>
 <?php

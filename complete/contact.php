@@ -2,11 +2,25 @@
 
 require_once('../library.inc.php');
 
-$rbac->enforce('view_contact', $_SESSION['user']);
-
-$exist = RecordUpdate ('contact.php', 'contacts', 'contact_id', 'cid', NULL, array('password' => array('function' => 'HashPassword')));
+if (!$rbac->check('view_contact', $_SESSION['user']) && !$rbac->check('view_contact_information', $_SESSION['user'])) {
+	$rbac->enforce('view_contact', $_SESSION['user']);
+}
 
 $cid = (isset ($_GET['cid']) ? $_GET['cid'] : NULL);
+
+$exist = true;
+if ($rbac->check('edit_contact', $_SESSION['user']) || ($cid == $_SESSION['user'] && $rbac->check('edit_self', $_SESSION['user']))) {
+	$exist = RecordUpdate ('contact.php', 'contacts', 'contact_id', 'cid', NULL,
+		array(
+			'username' => array(
+				'function' => 'strtolower'
+			),
+			'password' => array(
+				'function' => 'HashPassword'
+			)
+		)
+	);
+}
 
 if ($exist)
 {
@@ -175,12 +189,14 @@ do {
 		<td><input type="radio" name="gender" value="Male"<?php if ($exist) { if ($row_contact['gender'] == 'Male') echo ' checked'; } ?>>Male <input type="radio" name="gender" value="Female" <?php if ($exist) { if ($row_contact['gender'] == 'Female') echo ' checked'; } ?>>Female</td>
 	</tr>
 <?php } ?>
+	<?php if ($rbac->check('view_user', $_SESSION['user']) || ($cid == $_SESSION['user'] && $rbac->check('edit_self', $_SESSION['user']))): ?>
 	<tr>
 		<th scope="row">Database User</th>
 		<td><input type="text" name="username" value="<?php if ($exist) echo $row_contact['username']; ?>" /><br />
 			<input type="password" name="password" placeholder="<?php if ($exist && strlen($row_contact['password'])) echo '&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;'; ?>"/>
 		</td>
 	</tr>
+	<?php endif; ?>
 	<tr>
 		<th scope="row">Mailing Preference</th>
 		<td><select name="mailing_preference">
@@ -211,6 +227,7 @@ do {
     </tr>
 <?php } ?>
   </table>
+  <?php if ($rbac->check('edit_contact', $_SESSION['user']) || ($cid == $_SESSION['user'] && $rbac->check('edit_self', $_SESSION['user']))): ?>
 <table>
 <tr>
 <td><input name="button" type="submit"  value="<?php if ($exist) echo 'Update'; else echo 'Add'; ?>">
@@ -223,6 +240,7 @@ do {
 <input type="submit" name="button" value="<?php echo ($exist ? 'Revert' : 'Cancel'); ?>"></form></td>
 </tr>
 </table>
+<?php endif; ?>
 </body>
 </html>
 <?php

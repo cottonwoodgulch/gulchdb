@@ -7,7 +7,7 @@
 #
 # Host: localhost (MySQL 5.5.38)
 # Database: trek
-# Generation Time: 2014-12-25 06:44:06 +0000
+# Generation Time: 2014-12-25 21:42:09 +0000
 # ************************************************************
 
 
@@ -137,6 +137,7 @@ CREATE TABLE `contacts` (
   `password` varchar(255) DEFAULT NULL,
   `modified` datetime DEFAULT NULL,
   PRIMARY KEY (`contact_id`),
+  UNIQUE KEY `username` (`username`),
   KEY `contact_type_id` (`contact_type_id`),
   KEY `title_id` (`title_id`),
   KEY `degree_id` (`degree_id`)

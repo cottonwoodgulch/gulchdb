@@ -4,7 +4,10 @@
 	
 	$rbac->enforce('view_note', $_SESSION['user']);
 
-	$exist = RecordUpdate ('notes.php', 'notes', 'note_id', 'nid');
+	$exist = true;
+	if ($rbac->check('edit_note', $_SESSION['user'])) {
+		$exist = RecordUpdate ('notes.php', 'notes', 'note_id', 'nid');
+	}
 	
 	$cid = (isset($_GET['cid']) ? $_GET['cid'] : exit ("<strong>Unspecified Contact:</strong> A contact must be specified to load this form."));
 	$nid = (isset($_GET['nid']) ? $_GET['nid'] : NULL);
@@ -33,10 +36,11 @@
 				<td>
 					<input type="hidden" name="note_id" value="<?php echo $row_notes['note_id']; ?>">
 					<textarea name="note" rows="10" cols="30"><?php echo $row_notes['note']; ?></textarea><br><?php echo $row_notes['modified']; ?></td>
-				<td><input type="submit" name="button" value="Update"></td>
+				<?php if ($rbac->check('edit_note', $_SESSION['user'])): ?><td><input type="submit" name="button" value="Update"></td><?php endif; ?>
 			</tr>
 			</form>
 		<?php } ?>
+		<?php if ($rbac->check('edit_note', $_SESSION['user'])): ?>
 		<form action="notes.php?cid=<?php echo $cid; ?>&rec=insert" method="post">
 		<tr<?php Stripe($rc); ?>>
 			<td>
@@ -45,6 +49,7 @@
 			<td><input type="submit" name="button" value="Add"></td>
 		</tr>
 		</form>
+		<?php endif; ?>
 	</table>
 	
 </body>

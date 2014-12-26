@@ -1,9 +1,14 @@
 <?php
 	require_once('../library.inc.php');
-	
-	$rbac->enforce('view_payment', $_SESSION['user']);
 
-	$exist = RecordUpdate ('payments.php', 'payments', 'payment_id', 'pid');
+	if (!$rbac->check('view_payment', $_SESSION['user']) && !$rbac->check('view_financial_information', $_SESSION['user'])) {
+		$rbac->enforce('view_payment', $_SESSION['user']);
+	}
+	
+	$exist = true;
+	if ($rbac->check('edit_payment', $_SESSION['user'])) {
+		$exist = RecordUpdate ('payments.php', 'payments', 'payment_id', 'pid');
+	}
 
 	$cid = (isset ($_GET['cid']) ?
 		$_GET['cid'] :
@@ -122,6 +127,7 @@
 <?php
 	}
 ?>
+	<?php if ($rbac->check('edit_payment', $_SESSION['user'])): ?>
 <form name="payment-update" method="post" action="payments.php?cid=<?php echo $cid . ($pid ? "&pid=$pid" : ''); ?>&rec=&rec=<?php echo ($exist ? 'update' : 'insert'); ?>">
 	<input type="hidden" name="contact_id" value="<?php echo ($exist ? $row_payment['contact_id'] : $cid); ?>">
 	<table>
@@ -198,6 +204,7 @@ if($rows > 0)
 <input type="submit" name="button" value="Statement"></form></td>
 </tr>
 </table>
+<?php endif; ?>
 	</body>
 </html>
 <?php

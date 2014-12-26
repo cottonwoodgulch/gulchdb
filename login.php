@@ -12,11 +12,12 @@ if (isset($_REQUEST['redirect'])) {
 
 if (isset($_REQUEST['username']) && isset($_REQUEST['password'])) {
 	mysql_select_db ($GLOBALS['db']['db'], $GLOBALS['db']['link']);
-	$query = "SELECT * FROM contacts WHERE username = '{$_REQUEST['username']}' LIMIT 1";
+	$query = "SELECT * FROM contacts WHERE username = '" . strtolower($_REQUEST['username']) . "' LIMIT 1";
 	$result = mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
 	if ($user = mysql_fetch_assoc($result)) {
 		if (password_verify($_REQUEST['password'], $user['password'])) {
 			$_SESSION['user'] = $user['contact_id'];
+			$_SESSION['name'] = Name($user['contact_id'], '%F');
 		}
 	}
 }

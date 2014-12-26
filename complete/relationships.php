@@ -2,7 +2,9 @@
 
 require_once ('../library.inc.php');
 
-$rbac->enforce('view_relationship', $_SESSION['user']);
+if (!$rbac->check('view_relationship', $_SESSION['user']) && !$rbac->check('view_contact_information', $_SESSION['user'])) {
+	$rbac->enforce('view_relationship', $_SESSION['user']);
+}
 
 $cid = (isset($_GET['cid']) ? $_GET['cid'] : exit ("<strong>Unspecified Contact:</strong> A contact must be specified to load this form."));
 $rid = (isset($_GET['rid']) ? $_GET['rid'] : NULL);
@@ -26,73 +28,82 @@ $rec = (isset ($_GET['rec']) ? $_GET['rec'] : 'create');
 switch ($rec)
 {
 	case 'insert':
-		// first, do a regular insert
-		$rid = Insert ($_POST, 'relationships', 'relationship_id', NULL);
-
-		// now, find out what the inverse is of the relationship that we just inserted
-		$query = 'SELECT * FROM relationship_types WHERE relationship_type_id = ' . $_POST['relationship_type_id'] . ' LIMIT 1';
-		$relationship = mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
-		$row_relationship = mysql_fetch_assoc ($relationship);
-		mysql_free_result ($relationship);
-
-		// insert the inverse relationship as well
-		$inverse = array ('contact_id' => $_POST['relative_id'],
-						  'relative_id' => $cid,
-						  'relationship_type_id' => $row_relationship['inverse_relationship_id']);
-		$id = Insert ($inverse, 'relationships', 'relationship_id', NULL);
-
-		// redirect to this page again with a regular view
-		header('Location: relationships.php?cid=' . $_GET['cid'] . "&rid=$rid&rec=view");
-		exit;
+		if ($rbac->check('edit_relationship', $_SESSION['user'])) {
+			// first, do a regular insert
+			$rid = Insert ($_POST, 'relationships', 'relationship_id', NULL);
+	
+			// now, find out what the inverse is of the relationship that we just inserted
+			$query = 'SELECT * FROM relationship_types WHERE relationship_type_id = ' . $_POST['relationship_type_id'] . ' LIMIT 1';
+			$relationship = mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
+			$row_relationship = mysql_fetch_assoc ($relationship);
+			mysql_free_result ($relationship);
+	
+			// insert the inverse relationship as well
+			$inverse = array ('contact_id' => $_POST['relative_id'],
+							  'relative_id' => $cid,
+							  'relationship_type_id' => $row_relationship['inverse_relationship_id']);
+			$id = Insert ($inverse, 'relationships', 'relationship_id', NULL);
+	
+			// redirect to this page again with a regular view
+			header('Location: relationships.php?cid=' . $_GET['cid'] . "&rid=$rid&rec=view");
+			exit;
+		}
+		break;
 
 	case 'update':
-		// first, save a copy of the old relationship, pre-update
-		$query = "SELECT * FROM relationships AS r JOIN relationship_types AS t ON r.relationship_type_id = t.relationship_type_id WHERE relationship_id = $rid LIMIT 1";
-		$old = mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
-		$row_old = mysql_fetch_assoc ($old);
-		mysql_free_result ($old);
-
-		// next, delete the old inverse relationship
-		$query = "DELETE FROM relationships WHERE contact_id = " . $row_old['relative_id'] . " AND relative_id = " . $cid . " AND relationship_type_id = " . $row_old['inverse_relationship_id'] . " LIMIT 1";
-		mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
-
-		// next, do a regular record update
-		Update ($_POST, 'relationships', 'relationship_id', NULL);
-
-		// find out what the inverse is of the relationship that we just updated
-		$query = 'SELECT * FROM relationship_types WHERE relationship_type_id = ' . $_POST['relationship_type_id'] . ' LIMIT 1';
-		$relationship = mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
-		$row_relationship = mysql_fetch_assoc ($relationship);
-		mysql_free_result ($relationship);
-
-		//  then we need to insert an inverse relationship with the new relative
-		$inverse = array ('contact_id' => $_POST['relative_id'],
-						  'relative_id' => $cid,
-						  'relationship_type_id' => $row_relationship['inverse_relationship_id']);
-		$id = Insert ($inverse, 'relationships', 'relationship_id', NULL);
-
-		// redirect to this page in the regular view
-		header("Location: relationships.php?cid=$cid&rid=$rid&rec=view");
-		exit;
+		if ($rbac->check('edit_relationship', $_SESSION['user'])) {
+			// first, save a copy of the old relationship, pre-update
+			$query = "SELECT * FROM relationships AS r JOIN relationship_types AS t ON r.relationship_type_id = t.relationship_type_id WHERE relationship_id = $rid LIMIT 1";
+			$old = mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
+			$row_old = mysql_fetch_assoc ($old);
+			mysql_free_result ($old);
+	
+			// next, delete the old inverse relationship
+			$query = "DELETE FROM relationships WHERE contact_id = " . $row_old['relative_id'] . " AND relative_id = " . $cid . " AND relationship_type_id = " . $row_old['inverse_relationship_id'] . " LIMIT 1";
+			mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
+	
+			// next, do a regular record update
+			Update ($_POST, 'relationships', 'relationship_id', NULL);
+	
+			// find out what the inverse is of the relationship that we just updated
+			$query = 'SELECT * FROM relationship_types WHERE relationship_type_id = ' . $_POST['relationship_type_id'] . ' LIMIT 1';
+			$relationship = mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
+			$row_relationship = mysql_fetch_assoc ($relationship);
+			mysql_free_result ($relationship);
+	
+			//  then we need to insert an inverse relationship with the new relative
+			$inverse = array ('contact_id' => $_POST['relative_id'],
+							  'relative_id' => $cid,
+							  'relationship_type_id' => $row_relationship['inverse_relationship_id']);
+			$id = Insert ($inverse, 'relationships', 'relationship_id', NULL);
+	
+			// redirect to this page in the regular view
+			header("Location: relationships.php?cid=$cid&rid=$rid&rec=view");
+			exit;
+		}
+		break;
 
 	case 'delete':
-		// first, save a copy of the old relationship, pre-update
-		$query = "SELECT * FROM relationships AS r JOIN relationship_types AS t ON r.relationship_type_id = t.relationship_type_id WHERE relationship_id = $rid LIMIT 1";
-		$old = mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
-		$row_old = mysql_fetch_assoc ($old);
-		mysql_free_result ($old);
-
-		// next, do a regular delete
-		Delete ('relationships', "`relationship_id` = '$rid'");
-
-		// finally, delete the old matching inverse relationship
-		$query = 'DELETE FROM relationships WHERE contact_id = ' . $row_old['relative_id'] . '
-				  AND relative_id = ' . $cid . ' AND relationship_type_id = ' .
-				  $row_old['inverse_relationship_id'];
-		mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
-
-		// redirect back to the general relationships view
-		header ("Location: relationships.php?cid=$cid");
+		if ($rbac->check('edit_relationship', $_SESSION['user'])) {
+			// first, save a copy of the old relationship, pre-update
+			$query = "SELECT * FROM relationships AS r JOIN relationship_types AS t ON r.relationship_type_id = t.relationship_type_id WHERE relationship_id = $rid LIMIT 1";
+			$old = mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
+			$row_old = mysql_fetch_assoc ($old);
+			mysql_free_result ($old);
+	
+			// next, do a regular delete
+			Delete ('relationships', "`relationship_id` = '$rid'");
+	
+			// finally, delete the old matching inverse relationship
+			$query = 'DELETE FROM relationships WHERE contact_id = ' . $row_old['relative_id'] . '
+					  AND relative_id = ' . $cid . ' AND relationship_type_id = ' .
+					  $row_old['inverse_relationship_id'];
+			mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
+	
+			// redirect back to the general relationships view
+			header ("Location: relationships.php?cid=$cid");
+			exit;
+		}
 		exit;
 
 	case 'create':
@@ -154,7 +165,9 @@ $rc = 0;
 	<body>
 		<script src="../library.inc.js"></script>
 
+		<?php if ($rbac->check('edit_relationship', $_SESSION['user'])): ?>
 		<p>Please do not add redundant relationships to the database! For example, if we know that the parents of two people are the same, DO NOT add the sibling relationship to the database (this can be extrapolated by the system, and just adds work down the road). Thanks!</p>
+		<?php endif; ?>
 
 		<?php if (((! $exist) && ($totalRows_relationships > 0)) || ($exist && ($totalRows_relationships > 1))) { ?>
 		<table>
@@ -168,12 +181,13 @@ $rc = 0;
 				<tr<?php Stripe($rc); ?>>
 					<td><a href="contacts.php?cid=<?php echo $row_relationships['relative_id']; ?>&detail=relationships.php" target="content"><?php echo str_replace (" \"\"", "", Name($row_relationships['relative_id'], '%F %M "%N" %L %D')); ?></a></td>
 					<td><?php echo ucfirst ((strlen ($row_relationships["gender"]) ? $row_relationships[$row_relationships["gender"]] : $row_relationships["relationship_type"])); ?></td>
-					<td><form name="edit" method="post" action="relationships.php?cid=<?php echo $cid; ?>&rid=<?php echo $row_relationships['relationship_id']; ?>&rec=edit"><input type="submit" name="button" value="Edit"></form></td>
+					<?php if ($rbac->check('edit_relationship', $_SESSION['user'])): ?><td><form name="edit" method="post" action="relationships.php?cid=<?php echo $cid; ?>&rid=<?php echo $row_relationships['relationship_id']; ?>&rec=edit"><input type="submit" name="button" value="Edit"></form></td><?php endif; ?>
 				</tr>
 				<?php }}
 			?>
 		</table>
 		<?php }
+		if ($rbac->check('edit_relationship', $_SESSION['user'])):
 		if ($pattern) {
 		?>
 		<form name="edit" method="post" action="relationships.php?cid=<?php echo $cid; ?><?php echo ($exist ? "&rid=$rid&rec=update" : '&rec=insert'); ?>">
@@ -246,6 +260,7 @@ $rc = 0;
 			</table>
 			</form>
 		<?php } ?>
+		<?php endif; ?>
 	</body>
 
 </html>

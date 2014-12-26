@@ -1,9 +1,14 @@
 <?php
 require_once('../library.inc.php');
 
-$rbac->enforce('view_email', $_SESSION['user']);
+if (!$rbac->check('view_email', $_SESSION['user']) && !$rbac->check('view_contact_information', $_SESSION['user'])) {
+	$rbac->enforce('view_email', $_SESSION['user']);
+}
 
-$exist = RecordUpdate ('emails.php', 'emails', 'email_id', 'eid', 'email_associations');
+$exist = true;
+if ($rbac->check('edit_email', $_SESSION['user'])) {
+	$exist = RecordUpdate ('emails.php', 'emails', 'email_id', 'eid', 'email_associations');
+}
 
 $cid = (isset ($_GET['cid']) ? $_GET['cid'] : exit ("<strong>Unspecified Contact:</strong> A contact must be specified to load this form."));
 $eid = (isset ($_GET['eid']) ? $_GET['eid'] : NULL);
@@ -68,7 +73,7 @@ $totalRows_email_types = mysql_num_rows($email_types);
 <?php if ($totalRows_emails > 0) do { ?>
     <td><a href="emails.php?cid=<?php echo $cid; ?>&eid=<?php echo $row_emails['email_id']; ?>&rec=view"><?php echo $row_emails["email_type"]; ?></a></td>
 <?php } while ($row_emails = mysql_fetch_assoc($emails)); ?>
-	<td><a href="emails.php?cid=<?php echo $cid; ?>&rec=create">New Email</a></td>
+	<?php if ($rbac->check('edit_email', $_SESSION['user'])): ?><td><a href="emails.php?cid=<?php echo $cid; ?>&rec=create">New Email</a></td><?php endif; ?>
   </tr>
 </table>
 
@@ -131,6 +136,7 @@ else echo $_GET['cid']; ?>"> <?php } ?>
   </tr>
 <?php } ?>
 </table>
+<?php if ($rbac->check('edit_email', $_SESSION['user'])): ?>
 <table>
 <tr>
 <td>
@@ -149,6 +155,7 @@ else echo $_GET['cid']; ?>"> <?php } ?>
 <input type="submit" name="button" value="<?php echo ($exist ? 'Revert' : 'Cancel'); ?>"></form></td>
 </tr>
 </table>
+<?php endif; ?>
 </body>
 </html>
 <?php
