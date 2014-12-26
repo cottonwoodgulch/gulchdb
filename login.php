@@ -15,9 +15,8 @@ if (isset($_REQUEST['username']) && isset($_REQUEST['password'])) {
 	$query = "SELECT * FROM contacts WHERE username = '" . strtolower($_REQUEST['username']) . "' LIMIT 1";
 	$result = mysql_query ($query, $GLOBALS['db']['link']) or exit (mysql_error());
 	if ($user = mysql_fetch_assoc($result)) {
-		if (password_verify($_REQUEST['password'], $user['password'])) {
+		if ($phpass->CheckPassword($_REQUEST['password'], $user['password'])) {
 			$_SESSION['user'] = $user['contact_id'];
-			$_SESSION['name'] = Name($user['contact_id'], '%F');
 		}
 	}
 }
@@ -31,13 +30,36 @@ if (isset($_SESSION['user'])) {
 <html>
 	<head>
 		<title>Log In</title>
+		<style>
+			#login {
+				width: 150px;
+				display: block;
+				margin-left: auto;
+				margin-right: auto;
+				position: relative;
+				top: 50%;
+				transform: translateY(-50%);
+				padding: 20px;
+				border: solid 1px gainsboro;
+			}
+			
+			#login input {
+				margin: 0.5em;
+			}
+			
+			#login input[type="submit"] {
+				right: 0;
+			}
+		</style>
 	</head>
 	<body>
+		<div id="login">
 		<form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 			<input name="redirect" type="hidden" value="<?php echo $redirect; ?>" />
 			<input name="username" placeholder="mr_howie" type="text" />
-			<input name="password" type="password" />
+			<input name="password" placeholder="!h3y!Ru83!" type="password" />
 			<input type="submit" value="Log In" />
 		</form>
 	</body>
+	</div>
 </html>

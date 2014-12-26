@@ -4,8 +4,24 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "7b7b2f44cad38118ea09c94ee7613999",
+    "hash": "d51e720436c41960c248d4629be96ec9",
     "packages": [
+        {
+            "name": "openwall/phpass",
+            "version": "0.3",
+            "dist": {
+                "type": "tar",
+                "url": "http://www.openwall.com/phpass/phpass-0.3.tar.gz",
+                "reference": null,
+                "shasum": null
+            },
+            "type": "library",
+            "autoload": {
+                "classmap": [
+                    "PasswordHash.php"
+                ]
+            }
+        },
         {
             "name": "owasp/phprbac",
             "version": "2.0.x-dev",

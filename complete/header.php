@@ -93,7 +93,7 @@
 		</td>
 		<?php endif; ?>
 		<td>
-			<a target="_top" href="../login.php">Log out <?php echo $_SESSION['name']; ?></a>
+			<a target="_top" href="../login.php">Log out <?php echo Name($_SESSION['user'], '%F'); ?></a>
 		</td>
 		<td width="100%" align="right">Complete</td>
 	</tr>

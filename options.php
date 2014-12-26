@@ -34,5 +34,8 @@
 	<tr>
 		<td class="menu_tab"><a href="home.php" target="content">Home</a></td>
 	</tr>
+	<tr>
+		<td class="menu_tab"><a href="login.php" target="_top">Log out <?php echo Name($_SESSION['user'], '%F'); ?></a></td>
+	</tr>
 </table>
 </body>

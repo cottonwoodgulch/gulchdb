@@ -1,5 +1,32 @@
 {
+	"name" : "cottonwoodgulch/gulchdb",
+	"description": "Our alumni records, rosters and billing database.",
+	"authors": [
+		{
+			"name": "Seth Battis",
+			"email": "seth@battis.net",
+			"homepage": "http://battis.net",
+			"role": "Developer"
+		}
+	],
+    "repositories": [
+    {
+        "type": "package",
+        "package": {
+            "name": "openwall/phpass",
+            "version": "0.3",
+            "dist": {
+                "url": "http://www.openwall.com/phpass/phpass-0.3.tar.gz",
+                "type": "tar"
+            },
+            "autoload": {
+                "classmap": ["PasswordHash.php"]
+            }
+        }
+    }
+    ],
 	"require": {
-    	"owasp/phprbac": "2.0.*@dev"
-	}
+    	"owasp/phprbac": "2.0.*@dev",
+        "openwall/phpass": "0.3"
+    }
 }
