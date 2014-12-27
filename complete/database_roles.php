@@ -11,7 +11,7 @@
 	$rbac = new Rbac();
 		
 	if ($rbac->check('assign_role', $_SESSION['user']) && isset($_REQUEST['RoleID']) && isset($_REQUEST['toggle'])) {
-		if ($rbac->Permissions->getTitle($_REQUEST['RoleID']) != 'Admin' || $rbac->check('promote_admin', $_SESSION['user']))
+		if ($rbac->Permissions->getTitle($_REQUEST['RoleID']) != 'Administrator' || $rbac->check('promote_admin', $_SESSION['user']))
 		{
 			if ($_REQUEST['toggle'] == 'Add') {
 				$rbac->Users->assign($_POST['RoleID'], $cid);
@@ -63,15 +63,14 @@ foreach ($roles as $role):
 		<td><?php echo $role['Title']; ?></td>
 		<td><?php echo $role['Description']; ?></td>
 		<td>
-			<?php if ($role['Title'] != 'Admin' || $rbac->check('promote_admin', $_SESSION['user'])): ?>
+			<?php if ($role['Title'] != 'Administrator' || $rbac->check('promote_admin', $_SESSION['user'])): ?>
 			<form name="role-edit" method="post" action="database_roles.php?cid=<?php echo $cid; ?>">
 				<input type="hidden" name="RoleID" value="<?php echo $role['ID']; ?>"/>
 				<input type="submit" name="toggle" value="<?php echo $buttonName; ?>">
 			</form>
-			<?php else:
-				echo $buttonName;
-			endif;
-			?>
+			<?php else: ?>
+				<input type="button" disabled="true" value="<?php echo $buttonName; ?>" />
+			<?php endif; ?>
 		</td>
 	</tr>
 <?php endforeach; ?>

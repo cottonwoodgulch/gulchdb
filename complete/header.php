@@ -14,6 +14,11 @@
 <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 <link href="../stylesheet.css" rel="stylesheet" type="text/css">
 <base target="contact_detail">
+<script lang="javascript"><!--
+if (top.location == self.location) {
+    top.location = <?php echo $GLOBALS['db']['url']; ?>/;
+}
+//--></script>
 </head>
 
 <body class="menu">
@@ -92,9 +97,6 @@
 			<a href="notes.php?cid=<?php echo $cid; ?>">Notes</a>
 		</td>
 		<?php endif; ?>
-		<td>
-			<a target="_top" href="../login.php">Log out <?php echo Name($_SESSION['user'], '%F'); ?></a>
-		</td>
 		<td width="100%" align="right">Complete</td>
 	</tr>
 </table>

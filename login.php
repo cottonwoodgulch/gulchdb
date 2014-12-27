@@ -4,6 +4,9 @@ require_once('library.inc.php');
 
 unset($_SESSION['user']);
 
+// let's ignore redirect for now
+unset($_REQUEST['redirect']);
+
 if (isset($_REQUEST['redirect'])) {
 	$redirect = $_REQUEST['redirect'];
 } else {
@@ -40,7 +43,8 @@ if (isset($_SESSION['user'])) {
 				top: 50%;
 				transform: translateY(-50%);
 				padding: 20px;
-				border: solid 1px gainsboro;
+				border: solid 1px #eeeeee;
+				background: #eeeeff;
 			}
 			
 			#login input {
@@ -51,13 +55,18 @@ if (isset($_SESSION['user'])) {
 				right: 0;
 			}
 		</style>
+		<script lang="javascript"><!--
+			if (top.location != self.location) {
+				top.location = self.location.href;
+			}
+		//--></script>
 	</head>
-	<body>
+	<body onload="document.getElementById('username').focus();">
 		<div id="login">
 		<form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 			<input name="redirect" type="hidden" value="<?php echo $redirect; ?>" />
-			<input name="username" placeholder="mr_howie" type="text" />
-			<input name="password" placeholder="!h3y!Ru83!" type="password" />
+			<input id="username" name="username" placeholder="mr_howie" type="text" />
+			<input name="password" placeholder="hEY_rU8E!!1!" type="password" />
 			<input type="submit" value="Log In" />
 		</form>
 	</body>
