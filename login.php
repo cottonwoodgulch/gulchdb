@@ -40,8 +40,7 @@ if (isset($_SESSION['user'])) {
 				margin-left: auto;
 				margin-right: auto;
 				position: relative;
-				top: 50%;
-				transform: translateY(-50%);
+				top: 1in;
 				padding: 20px;
 				border: solid 1px #eeeeee;
 				background: #eeeeff;
